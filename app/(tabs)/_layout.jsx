@@ -14,6 +14,7 @@ const TabsLayout = () => {
       <Stack.Screen name="discover" options={{ headerShown: false }} />
       <Stack.Screen name="bookings" options={{ headerShown: false }} />
       <Stack.Screen name="profile" options={{ headerShown: false }} />
+      {/* <Stack.Screen name="test" options={{ headerShown: false }} /> */}
 
     </Stack>
     <CustomTabBar />

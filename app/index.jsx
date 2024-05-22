@@ -35,7 +35,7 @@ export default function App() {
             title="Commencer"
             containerStyles="bg-white mt-10 w-full"
             textStyles="font-psemibold text-primary"
-            handlePress={() => router.push("/login")}
+            handlePress={() => router.push("/home")}
           />
         </View>
       </View>

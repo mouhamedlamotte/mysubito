@@ -22,11 +22,11 @@ import {
 } from "lucide-react-native";
 import CustomButton from "../../components/CustomButton";
 import images from "../../constants/images";
-import { Link } from "expo-router";
+import {  router } from "expo-router";
 import CarCard from "../../components/CarCard";
 import CityCard from "../../components/CityCard";
 import ServiceCard from "../../components/ServiceCard";
-import { useModal } from "../../provider/ModalProvider";
+import TransferAeroportTab from "../../components/TransferAeroportTab";
 
 const Home = () => {
   const services = [
@@ -56,14 +56,7 @@ const Home = () => {
   ];
 
   const [refreshing, setRefreshing] = useState(false);
-  const { showModal } = useModal();
 
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
-  }, []);
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -78,7 +71,12 @@ const Home = () => {
         showsVerticalScrollIndicator={false}
         className="w-full h-full"
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          <RefreshControl
+            progressBackgroundColor="white"
+            colors={["#EF497A"]}
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+          />
         }
       >
         <View className="w-full bg-primary h-[220px]  rounded-b-xl py-2 px-2">
@@ -109,67 +107,7 @@ const Home = () => {
             style={{ shadowOpacity: 0.5, shadowColor: "black" }}
           />
         </View>
-        <View className="w-full flex justify-center items-center ">
-          <View
-            className="bg-white shadow-md border border-slate-300 w-[90%] rounded-3xl p-4 relative"
-            style={{ shadowOpacity: 0.5, shadowColor: "black" }}
-          >
-            <TouchableOpacity
-              className="bg-white z-10 flex p-1 absolute shadow-md  justify-center items-center rounded-full right-4 top-24"
-              style={{ shadowOpacity: 0.5, shadowColor: "black" }}
-              activeOpacity={0.7}
-            >
-              <ArrowDownUp size={30} className="text-primary" />
-            </TouchableOpacity>
-            <View className="flex flex-row items-center justify-between">
-              <Text className="text-lg font-bold text-center">
-                Transfert Aeroport
-              </Text>
-              <View className="flex flex-row items-center" style={{ gap: 5 }}>
-                {/* <Text className="text-center text-lg text-primary">1</Text> */}
-                <Settings2 size={25} className="text-primary" />
-              </View>
-            </View>
-            <View className="mt-4 flex flex-col" style={{ gap: 8 }}>
-              <CustomButton
-                title="Selectionner un aeroport"
-                containerStyles="bg-transparent border border-slate-300 py-4 justify-start  items-center"
-                icon={<Plane size={20} className="text-slate-900" />}
-                textStyles={"text-slate-900 text-sm mx-2"}
-              />
-              <CustomButton
-                title="Selectionner votre Addresse"
-                containerStyles="bg-transparent border border-slate-300 py-4 justify-start  items-center"
-                icon={<MapPinned size={20} className="text-slate-900" />}
-                textStyles={"text-slate-900 text-sm mx-2"}
-              />
-              <CustomButton
-                title="Selectionner numero de vol"
-                containerStyles="bg-transparent border border-slate-300 py-4 justify-start  items-center"
-                icon={<Hash size={20} className="text-slate-900" />}
-                textStyles={"text-slate-900 text-sm mx-2"}
-              />
-              <View
-                style={{ gap: 5 }}
-                className={`rounded-md py-4 flex flex-row px-4 justify-start items-center bg-transparent border border-slate-300 divide-x-2 divide-slate-300`}
-              >
-                <CustomButton
-                  title="Fry, May 17"
-                  containerStyles="py-0 px-0 pr-8 bg-transparent border-r-2 rounded-none border-slate-300 "
-                  textStyles="text-slate-900 text-sm mx-1"
-                  icon={<Calendar size={20} className="text-slate-900" />}
-                />
-                <CustomButton
-                  title="Retour"
-                  containerStyles="py-0 px-8 bg-transparent justify-center  items-center"
-                  textStyles="text-slate-500 text-sm "
-                  icon={<Plus size={20} className="text-slate-500" />}
-                />
-              </View>
-              <CustomButton title="Rechercher" />
-            </View>
-          </View>
-        </View>
+          <TransferAeroportTab />
         <View className="mt-4 px-1.5">
           <View className="py-4 relative">
             <TouchableOpacity>
@@ -196,9 +134,9 @@ const Home = () => {
             <Text className="text-xl font-psemibold text-slate-800">
               Ville populaire
             </Text>
-            <Link href="/discover">
+            <Text onPress={() => router.navigate(`/discover`)}>
               <Text className="text-primary font-psemibold">Voir plus</Text>
-            </Link>
+            </Text>
           </View>
 
           <FlatList

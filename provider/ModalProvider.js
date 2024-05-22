@@ -1,4 +1,3 @@
-import { View, Text } from 'react-native'
 import React, { createContext, useContext, useState } from 'react'
 import CustomModal from '../components/CustomModal';
 
