@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { SplashScreen, Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import { ModalProvider } from "../provider/ModalProvider";
+import { AuthProvider } from "../context/authContext";
 // import GlobalProvider  from "../context/GlobalProvider";
 
 SplashScreen.preventAutoHideAsync();
@@ -26,6 +27,7 @@ const RootLayout = () => {
 
   if (!fontsLoaded && !error) return null;
   return (
+    <AuthProvider>
     <ModalProvider>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -33,6 +35,7 @@ const RootLayout = () => {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
     </ModalProvider>
+    </AuthProvider>
   );
 };
 

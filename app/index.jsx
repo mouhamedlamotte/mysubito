@@ -1,14 +1,27 @@
-import { router } from "expo-router";
+import { Redirect, router, SplashScreen } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import images from "../constants/images";
 import CustomButton from "../components/CustomButton";
+import { useAuth } from "../context/authContext";
+import { icons, Loader } from "lucide-react-native";
 
 export default function App() {
+
+  const {authState, loading}  = useAuth()
+
+  if (loading) return <Loading />;
+
+  if (!loading && authState?.authenticated) return <Redirect href="/home" />
+
+  
+
   return (
     <>
-    <SafeAreaView className="h-full bg-white">
+      <StatusBar style="light" />
+    <SafeAreaView
+     className="h-full bg-white">
       <View className="flex items-center justify-center mt-24">
         <Image
           source={images.taxiUlistration}
@@ -35,12 +48,20 @@ export default function App() {
             title="Commencer"
             containerStyles="bg-white mt-10 w-full"
             textStyles="font-psemibold text-primary"
-            handlePress={() => router.push("/home")}
+            handlePress={() => router.push("/login")}
           />
         </View>
       </View>
     </SafeAreaView>
       <StatusBar style="light" backgroundColor="#EF497A" />
     </>
+  );
+}
+
+const Loading = () => {
+  return (
+    <View className="flex-1 justify-center items-center">
+      <Loader size={40} color="#EF497A" />
+    </View>
   );
 }

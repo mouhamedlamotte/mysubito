@@ -14,11 +14,14 @@ import {
 import ToggleSwitch from "toggle-switch-react-native";
 
 import * as ImagePicker from "expo-image-picker"; 
+import { useAuth } from "../../context/authContext";
+import { router } from "expo-router";
 
 const Profile = () => {
   const [toggle, setToggle] = useState(false);
   const [file, setFile] = useState(null); 
   const [error, setError] = useState(null); 
+  const {onLogout} = useAuth();
 
   const pickImage = async () => { 
     const { status } = await ImagePicker. 
@@ -38,12 +41,28 @@ const Profile = () => {
     } 
 }; 
 
+  const handleSignOut = () => {
+    Alert.alert("Sign Out", "Are you sure you want to sign out?", [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+      { text: "OK", onPress: () => {
+        onLogout();
+        router.navigate("/login");
+      }},
+    ]);
+  };
+
   return (
     <SafeAreaView className="h-full bg-white">
       <ScrollView className="h-full bg-primary flex flex-col">
         <View className="bg-primary w-full p-4 flex flex-row items-start justify-between">
           <Settings className="text-white" size={30} />
-          <LogOut className="text-white" size={30} />
+          <LogOut className="text-white" size={30}
+          onPress={handleSignOut}
+          />
         </View>
         <View className=" bg-white grow mt-10 min-h-[88vh] relative rounded-t-3xl">
           <View className="h-[100px] w-full  absolute -top-[50px] flex items-center justify-center">

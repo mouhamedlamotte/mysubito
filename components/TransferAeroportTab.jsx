@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import CustomButton from "./CustomButton";
 import {
   ArrowDownUp,
-  Calendar,
   Hash,
   MapPinned,
   Plane,
@@ -13,19 +12,24 @@ import {
 import CustomSelectDropdown from "./CustomSelectDropdown";
 import CustomTextInput from "./InpuField";
 import CustomDatePicker from "./CustomDatePicker";
+import { useModal } from "../provider/ModalProvider";
 
 
 const TransferAeroportTab = () => {
   const today = new Date();
-  const [date , setDate] = useState(today);
+  const [date, setDate] = useState(today);
   const [bookOrder, setBookOrder] = useState("departure");
+
+  const [selectedairport, setSelectedairport] = useState(null);
+  const [selectedCyty, setSelectedCyty] = useState(null);
+  const [flyNumber, setFlyNumber] = useState(null);
+
+  const {showModal, hideModal} = useModal()
 
   const handleBookOrderChange = (value) => {
     setBookOrder(value);
   };
 
-  const [selectedairport, setSelectedairport] = useState(null);
-  const [selectedCyty, setSelectedCyty] = useState(null);
 
   const selectOptions = [
     {
@@ -112,6 +116,12 @@ const TransferAeroportTab = () => {
     setDate(date);
   };
 
+  const handleSerch = () => {
+      if  (!selectedairport || !selectedCyty || !flyNumber) {
+        showModal("warning", "veuillez rensigner tous les champs")
+      }
+  };
+
   return (
     <View className="w-full flex justify-center items-center ">
       <View
@@ -122,7 +132,11 @@ const TransferAeroportTab = () => {
           className="bg-white z-10 flex p-1 absolute shadow-md  justify-center items-center rounded-full right-4 top-24"
           style={{ shadowOpacity: 0.5, shadowColor: "black" }}
           activeOpacity={0.7}
-          onPress={() => handleBookOrderChange(bookOrder === "departure" ? "arrival" : "departure")}
+          onPress={() =>
+            handleBookOrderChange(
+              bookOrder === "departure" ? "arrival" : "departure"
+            )
+          }
         >
           <ArrowDownUp size={30} className="text-primary" />
         </TouchableOpacity>
@@ -136,22 +150,26 @@ const TransferAeroportTab = () => {
           </View>
         </View>
         <View className="mt-4 flex flex-col" style={{ gap: 8 }}>
-          <View className={`flex transition-all ${bookOrder === "departure" ? "flex-col" : "flex-col-reverse"}`} style={{ gap: 8 }}>
-          <CustomSelectDropdown
-
-            title="Selectionner votre Aeroport"
-            options={AirportOptions.map((option) => option.name)}
-            selectedOption={selectedairport}
-            onSelect={(option) => setSelectedairport(option)}
-            icon={<Plane size={20} className="text-slate-900" />}
-          />
-          <CustomSelectDropdown
-            title="Selectionner votre Adresse"
-            options={CityOptions.map((option) => option.name)}
-            selectedOption={selectedCyty}
-            onSelect={(option) => setSelectedCyty(option)}
-            icon={<MapPinned size={20} className="text-slate-900" />}
-          />
+          <View
+            className={`flex transition-all ${
+              bookOrder === "departure" ? "flex-col" : "flex-col-reverse"
+            }`}
+            style={{ gap: 8 }}
+          >
+            <CustomSelectDropdown
+              title="Selectionner votre Aeroport"
+              options={AirportOptions.map((option) => option.name)}
+              selectedOption={selectedairport}
+              onSelect={(option) => setSelectedairport(option)}
+              icon={<Plane size={20} className="text-slate-900" />}
+            />
+            <CustomSelectDropdown
+              title="Selectionner votre Adresse"
+              options={CityOptions.map((option) => option.name)}
+              selectedOption={selectedCyty}
+              onSelect={(option) => setSelectedCyty(option)}
+              icon={<MapPinned size={20} className="text-slate-900" />}
+            />
           </View>
           <CustomTextInput
             keywordType="numeric"
@@ -159,15 +177,15 @@ const TransferAeroportTab = () => {
             // containerClass="bg-transparent border border-slate-300 py-4 justify-start  items-center"
             icon={<Hash size={20} className="text-slate-900" />}
             textClass={"text-slate-900 text-sm mx-2"}
+
+            value={flyNumber}
+            handleTextChange={(text) => setFlyNumber(text)}
           />
           <View
             style={{ gap: 5 }}
             className={`rounded-md py-4 flex flex-row px-4 justify-start items-center bg-transparent border border-slate-300 divide-x-2 divide-slate-300`}
           >
-            <CustomDatePicker
-              onPickDate={onDateChange}
-              initialDate={date}
-            />
+            <CustomDatePicker onPickDate={onDateChange} initialDate={date} />
             <CustomButton
               title="Retour"
               containerStyles="py-0 px-8 bg-transparent justify-center  items-center"
@@ -175,7 +193,9 @@ const TransferAeroportTab = () => {
               icon={<Plus size={20} className="text-slate-500" />}
             />
           </View>
-          <CustomButton title="Rechercher" />
+          <CustomButton title="Rechercher" 
+          handlePress={handleSerch}
+          />
         </View>
       </View>
     </View>

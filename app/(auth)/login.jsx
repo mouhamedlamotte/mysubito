@@ -2,33 +2,60 @@ import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity,
-  Image,
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeft, Eye, EyeOff, Mail, Phone } from "lucide-react-native";
+import { Eye, EyeOff, Mail, Phone, User } from "lucide-react-native";
 import CustomButton from "../../components/CustomButton";
 import InpuField from "../../components/InpuField";
-import { icons } from "../../constants";
 import { router } from "expo-router";
 import AuthHead from "../../components/AuthHead";
+import { useAuth } from "../../context/authContext";
+import { useModal } from "../../provider/ModalProvider";
 
 const Login = () => {
-  const [logInMethod, setLogInMethod] = useState("email");
+  const { showModal } = useModal()
+
+  const { onLogin } = useAuth()
+
+  const [logInMethod, setLogInMethod] = useState("username");
   const [user, setUser] = useState({
-    email: "",
-    phone: "",
+    username: "",
+    // phone: "",
     password: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false)
 
 
-  const handleLogin = () => {
-    setIsSubmitting(true);
-    console.log(user);
-    setIsSubmitting(false);
+  const handleLogin = async () => {
+    if (logInMethod === "username") {
+      if (!user.username || !user.password) {
+        showModal("warning", "Veuillez renseigner tous les champs")
+        return;
+      }
+    } else if (logInMethod === "phone") {
+      if (!user.phone || !user.password) {
+        showModal("warning", "Veuillez renseigner tous les champs")
+        return;
+      }
+    }
+    try {
+      setIsSubmitting(true);
+      const result = await onLogin(user.username, user.password);
+      console.log(result);
+      if (!result.error) {
+        setIsSubmitting(false);
+        router.navigate("/home");
+      }else{
+        showModal("warning", result.message)
+        setIsSubmitting(false);
+      }
+      
+    } catch (error) {
+      console.log(error);
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -38,15 +65,15 @@ const Login = () => {
         <View className="mt-6 px-4 w-full">
           <Toggle logInMethod={logInMethod} setLogInMethod={setLogInMethod} />
           <View className="mt-6 flex flex-col">
-            {logInMethod === "email" ? (
+            {logInMethod === "username" ? (
               <InpuField
-                title="Email"
-                placeholder="Entrez votre email"
-                icon={<Mail size={20} className="text-gray-600" />}
+                title="username"
+                placeholder="Entrez votre username"
+                icon={<User size={20} className="text-gray-600" />}
                 containerClass=""
-                value={user.email}
+                value={user.username}
                 handleTextChange={(e) =>
-                  setUser({ ...user, email: e.nativeEvent.text })
+                  setUser({ ...user, username: e.nativeEvent.text })
                 }
               />
             ) : (
@@ -84,7 +111,7 @@ const Login = () => {
             title="Se connecter"
             containerStyles="mt-10 shadow-xl"
             isLoading={isSubmitting}
-            handlePress={()=>router.push('/home')}
+            handlePress={handleLogin}
           />
           {/* <Text className="self-center mb-3 mt-3 font-psemibold text-lg text-gray-500">
             Ou se connecter avec
@@ -127,23 +154,23 @@ export const Toggle = ({logInMethod, setLogInMethod}) => {
   return(
       <View className="w-full p-1 bg-primary/10 rounded-md flex flex-row  ">
       <CustomButton
-        handlePress={() => setLogInMethod("email")}
+        handlePress={() => setLogInMethod("username")}
         containerStyles={`flex-1 ${
-          logInMethod === "email" ? "bg-primary" : "bg-transparent"
+          logInMethod === "username" ? "bg-primary" : "bg-transparent"
         }`}
-        title="Email"
+        title="username"
         textStyles={`${
-          logInMethod === "email" ? "text-white" : "text-black"
+          logInMethod === "username" ? "text-white" : "text-black"
         }`}
       />
       <CustomButton
         handlePress={() => setLogInMethod("phone")}
         containerStyles={`flex-1 ${
-          logInMethod === "email" ? "bg-transparent" : "bg-primary"
+          logInMethod === "username" ? "bg-transparent" : "bg-primary"
         }`}
         title="Phone"
         textStyles={`${
-          logInMethod === "email" ? "text-black" : "text-white"
+          logInMethod === "username" ? "text-black" : "text-white"
         }`}
       />
     </View>
